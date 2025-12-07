@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block Blast Online</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #111;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    #welcomeScreen, #game {
+        width: 400px;
+        height: 600px;
+        background-color: #222;
+        border: 3px solid #00f;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #game {
+        display: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .block {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background-color: red;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 18px;
+        margin-top: 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #00f;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #0066cc;
+    }
+
+    #score {
+        color: #fff;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    #gameOver {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: yellow;
+        font-size: 36px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+    }
+</style>
+</head>
+<body>
+
+<div id="welcomeScreen">
+    <h1>Welcome to Block Blast!</h1>
+    <button id="startBtn">Start Game</button>
+</div>
+
+<div id="game">
+    <div id="score">Score: 0</div>
+    <div id="gameOver">
+        Game Over!
+        <button id="restartBtn">Restart</button>
+    </div>
+</div>
+
+<script>
+const welcomeScreen = document.getElementById('welcomeScreen');
+const startBtn = document.getElementById('startBtn');
+const game = document.getElementById('game');
+const scoreEl = document.getElementById('score');
+const gameOverEl = document.getElementById('gameOver');
+const restartBtn = document.getElementById('restartBtn');
+
+let score = 0;
+let gameRunning = false;
+let blockInterval;
+
+startBtn.addEventListener('click', () => {
+    welcomeScreen.style.display = 'none';
+    game.style.display = 'flex';
+    startGame();
+});
+
+restartBtn.addEventListener('click', () => {
+    document.querySelectorAll('.block').forEach(b => b.remove());
+    gameOverEl.style.display = 'none';
+    startGame();
+});
+
+function startGame() {
+    score = 0;
+    scoreEl.textContent = 'Score: ' + score;
+    gameRunning = true;
+
+    blockInterval = setInterval(createBlock, 1000);
+}
+
+function endGame() {
+    gameRunning = false;
+    gameOverEl.style.display = 'flex';
+    clearInterval(blockInterval);
+}
+
+function createBlock() {
+    if(!gameRunning) return;
+
+    const block = document.createElement('div');
+    block.classList.add('block');
+    block.style.left = Math.random() * (game.clientWidth - 50) + 'px';
+    block.style.top = '0px';
+    game.appendChild(block);
+
+    block.addEventListener('click', () => {
+        if(!gameRunning) return;
+        game.removeChild(block);
+        score += 1;
+        scoreEl.textContent = 'Score: ' + score;
+    });
+
+    let fallInterval = setInterval(() => {
+        if(!gameRunning) { clearInterval(fallInterval); return; }
+        let top = parseInt(block.style.top);
+        if(top + 50 >= game.clientHeight) {
+            clearInterval(fallInterval);
+            game.removeChild(block);
+            endGame();
+        } else {
+            block.style.top = top + 5 + 'px';
+        }
+    }, 50);
+}
+</script>
+
+</body>
+</html>
