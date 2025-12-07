@@ -1,0 +1,107 @@
+<!DOCTYPE html> Welcom
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Blast</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        #game {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            background-color: #222;
+            border: 3px solid #00f;
+            overflow: hidden;
+        }
+        .block {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #score {
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 20px;
+            text-align: center;
+        }
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: yellow;
+            font-size: 36px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div id="score">Score: 0</div>
+        <div id="game">
+            <div id="gameOver">Game Over!</div>
+        </div>
+    </div>
+
+    <script>
+        const game = document.getElementById('game');
+        const scoreEl = document.getElementById('score');
+        const gameOverEl = document.getElementById('gameOver');
+        let score = 0;
+        let gameRunning = true;
+
+        function createBlock() {
+            if(!gameRunning) return;
+
+            const block = document.createElement('div');
+            block.classList.add('block');
+            block.style.left = Math.random() * (game.clientWidth - 50) + 'px';
+            block.style.top = '0px';
+            game.appendChild(block);
+
+            block.addEventListener('click', () => {
+                if(!gameRunning) return;
+                game.removeChild(block);
+                score += 1;
+                scoreEl.textContent = 'Score: ' + score;
+            });
+
+            let fallInterval = setInterval(() => {
+                if(!gameRunning) {
+                    clearInterval(fallInterval);
+                    return;
+                }
+                let top = parseInt(block.style.top);
+                if (top + 50 >= game.clientHeight) {
+                    clearInterval(fallInterval);
+                    game.removeChild(block);
+                    endGame(); // Nese blloku arrin fundin, lojtari humb
+                } else {
+                    block.style.top = top + 5 + 'px';
+                }
+            }, 50);
+        }
+
+        function endGame() {
+            gameRunning = false;
+            gameOverEl.style.display = 'block';
+        }
+
+        setInterval(createBlock, 1000); // Blloqe të reja çdo sekondë
+    </script>
+</body>
+</html>
