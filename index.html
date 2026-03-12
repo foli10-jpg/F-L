@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BiG-ChaTT</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+}
+
+/* TOPBAR */
+
+.topbar{
+background:#020617;
+padding:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-weight:bold;
+}
+
+/* VIDEO AREA */
+
+.video-container{
+position:relative;
+display:flex;
+justify-content:center;
+align-items:center;
+margin-top:20px;
+}
+
+#userVideo{
+width:70%;
+height:500px;
+background:black;
+border-radius:12px;
+border:3px solid #22c55e;
+object-fit:cover;
+}
+
+#myVideo{
+width:200px;
+height:150px;
+position:absolute;
+bottom:20px;
+right:20px;
+background:black;
+border-radius:12px;
+border:2px solid white;
+object-fit:cover;
+}
+
+/* BUTTONS */
+
+.buttons{
+margin-top:20px;
+}
+
+button{
+padding:12px 25px;
+margin:5px;
+border:none;
+border-radius:8px;
+background:#22c55e;
+color:white;
+font-size:15px;
+cursor:pointer;
+}
+
+button:hover{
+background:#16a34a;
+}
+
+/* CHAT */
+
+.chat{
+margin-top:20px;
+}
+
+#chatBox{
+width:500px;
+height:200px;
+margin:20px auto;
+background:#1e293b;
+overflow:auto;
+padding:10px;
+border-radius:10px;
+text-align:left;
+}
+
+input{
+padding:10px;
+border-radius:6px;
+border:none;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width:768px){
+
+.video-container{
+margin-top:00;
+}
+
+#userVideo{
+width:100%;
+height:75vh;
+border-radius:0;
+border:none;
+}
+
+#myVideo{
+width:120px;
+height:160px;
+bottom:15px;
+right:10px;
+border:2px solid white;
+}
+
+#chatBox{
+width:90%;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+<div>BiG-ChaTT</div>
+<div id="userInfo">Online</div>
+</div>
+
+<div class="video-container">
+
+<video id="userVideo" autoplay></video>
+<video id="myVideo" autoplay muted></video>
+
+</div>
+
+<div class="buttons">
+
+<button onclick="startCamera()">Start Camera</button>
+<button onclick="nextUser()">Next</button>
+<button onclick="stopCamera()">Stop</button>
+
+</div>
+
+<div class="chat">
+
+<input id="message" placeholder="Mesazh...">
+<button onclick="sendMessage()">Send</button>
+
+<div id="chatBox"></div>
+
+</div>
+
+<script>
+
+let stream
+
+function startCamera(){
+
+navigator.mediaDevices.getUserMedia({video:true,audio:true})
+.then(function(s){
+
+stream=s
+document.getElementById("myVideo").srcObject=s
+
+})
+.catch(function(){
+alert("Kamera nuk u lejua")
+})
+
+}
+
+function stopCamera(){
+
+if(stream){
+stream.getTracks().forEach(track=>track.stop())
+}
+
+}
+
+function nextUser(){
+
+let chat=document.getElementById("chatBox")
+chat.innerHTML+="<p><i>Po kerkohet user tjeter...</i></p>"
+chat.scrollTop=chat.scrollHeight
+
+}
+
+function sendMessage(){
+
+let msg=document.getElementById("message").value
+if(msg=="") return
+
+let chat=document.getElementById("chatBox")
+
+chat.innerHTML+="<p><b>Ti:</b> "+msg+"</p>"
+
+document.getElementById("message").value=""
+chat.scrollTop=chat.scrollHeight
+
+}
+
+</script>
+
+</body>
+</html>
